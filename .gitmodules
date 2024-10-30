@@ -1,0 +1,3 @@
+[submodule "lib/QFacefusion"]
+	path = lib/QFacefusion
+	url = https://github.com/QQxiaoming/QFacefusion.git
