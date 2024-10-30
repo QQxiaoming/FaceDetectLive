@@ -1,0 +1,3 @@
+# FaceDetectLive
+
+FaceDetectLive是一个基于yoloface_8n的人脸检测工具。
