@@ -28,6 +28,7 @@ public:
     void checkCloseEvent(QCloseEvent *event);
 
 private slots:
+    void on_actionSrc_triggered();
     void on_actionAbout_triggered();
 
 private:
@@ -42,6 +43,7 @@ private:
     QPixmap outImg;
     int64_t m_index = 0;
     bool donotCheckCloseEvent = false;
+    bool hasSrc = false;
 };
 
 

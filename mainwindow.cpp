@@ -6,6 +6,7 @@
 #include <QTimer>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QFileDialog>
 #if QT_CONFIG(permissions)
 #include <QPermissions>
 #endif
@@ -30,7 +31,9 @@ CentralWidget::CentralWidget(QWidget *parent)
         foreach(const QCameraDevice &device, cameras) {
             cameraList.append(device.description());
         }
-        int index = QInputDialog::getItem(this, "选择摄像头", "摄像头", cameraList, 0, false).toInt();
+        QString srcCamera = QInputDialog::getItem(this, "选择摄像头", "摄像头", cameraList, 0, false);
+        int index = cameraList.indexOf(srcCamera);
+        if(index==-1) index = 0;
         camera = new QCamera(cameras.at(index), this);
         faceSwapThread = new QFaceFusionThread(MODEL_PATH, this);
         capture->setCamera(camera);
@@ -52,8 +55,13 @@ CentralWidget::CentralWidget(QWidget *parent)
             m_index++;
         });
         connect(videoSink, &QVideoSink::videoFrameChanged, this, [&](const QVideoFrame &frame){
-            if(faceSwapThread->currentProgress() < 2)
-                faceSwapThread->setDetect(frame.toImage(),{"detectimg"},0.5f,0.3f);
+            if(faceSwapThread->currentProgress() < 2) {
+                if(hasSrc) {
+                    faceSwapThread->setTarget(frame.toImage(),{"targetimg"},0.5f,0.3f);
+                } else {
+                    faceSwapThread->setDetect(frame.toImage(),{"detectimg"},0.5f,0.3f);
+                }
+            }
         });
 
         faceSwapThread->start();
@@ -118,6 +126,20 @@ void CentralWidget::checkAuthorizationStatus(void) {
         break;
     }
 #endif
+}
+
+void CentralWidget::on_actionSrc_triggered()
+{
+    static QString lastPath = QDir::homePath();
+    QString fileName = QFileDialog::getOpenFileName(this, "选择图像", lastPath, "图像文件 (*.png *.jpg *.jpeg *.bmp);;所有文件 (*)");
+    lastPath = fileName;
+    if (!fileName.isEmpty()) {
+        faceSwapThread->setSource(QImage(fileName));
+        hasSrc = true;
+    } else {
+        faceSwapThread->clearSource();
+        hasSrc = false;
+    }
 }
 
 void CentralWidget::on_actionAbout_triggered() {

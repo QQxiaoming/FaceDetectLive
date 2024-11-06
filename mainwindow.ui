@@ -59,8 +59,9 @@
    </property>
    <widget class="QMenu" name="menuAbout">
     <property name="title">
-     <string>关于</string>
+     <string>设置</string>
     </property>
+    <addaction name="actionSrc"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuAbout"/>
@@ -68,6 +69,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>关于</string>
+   </property>
+  </action>
+  <action name="actionSrc">
+   <property name="text">
+    <string>设置源</string>
    </property>
   </action>
  </widget>
